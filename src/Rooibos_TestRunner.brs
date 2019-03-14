@@ -30,9 +30,9 @@ function RBS_TR_TestRunner(args = {}) as object
   if (args.testConfigPath <> invalid and fs.Exists(args.testConfigPath))
     ? "Loading test config from " ; args.testConfigPath
     rawConfig = ReadAsciiFile(args.testConfigPath)
-  else if (fs.Exists("pkg:/source/tests/testconfig.json"))
-    ? "Loading test config from default location : pkg:/source/tests/testconfig.json"
-    rawConfig = ReadAsciiFile("pkg:/source/tests/testconfig.json")
+  else if (fs.Exists("pkg:/source/tests/rooibos/testconfig.json"))
+    ? "Loading test config from default location : pkg:/source/tests/rooibos/testconfig.json"
+    rawConfig = ReadAsciiFile("pkg:/source/tests/rooibos/testconfig.json")
   else
     ? "None of the testConfig.json locations existed"
   end if

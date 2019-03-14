@@ -1,5 +1,8 @@
 sub Main(args as dynamic)
-    if (type(Rooibos__Init) = "Function") then Rooibos__Init(SetupGlobals, "AddTestUtils")
+    if (type(Rooibos__Init) = "Function") then Rooibos__Init({
+        preTestSetup: SetupGlobals
+        testUtilsDecoratorMethodName: "AddTestUtils"
+    })
 
     InitScreen()
 end sub

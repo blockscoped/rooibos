@@ -4,24 +4,34 @@
 ' * @link https://github.com/georgejecook/rooibos#readme
 ' * @license MIT
 ' */
-function Rooibos__Init(preTestSetup = invalid,  testUtilsDecoratorMethodName = invalid, testSceneName = "TestsScene") as void
+function Rooibos__Init(_options = {} as object) as void
+  options = {
+    preTestSetup: invalid
+    testUtilsDecoratorMethodName: invalid
+    testSceneName: "TestsScene"
+    configPath: "pkg:/source/tests/rooibos/testconfig.json"
+  }
+  options.append(_options)
+  ? "OPTIONS: " options
+  if NOT validateOptions(options) then return
   args = {}
   if createObject("roAPPInfo").IsDev() <> true then
     ? " not running in dev mode! - rooibos tests only support sideloaded builds - aborting"
     return
   end if
-  args.testUtilsDecoratorMethodName = testUtilsDecoratorMethodName
+  args.testUtilsDecoratorMethodName = options.testUtilsDecoratorMethodName
   screen = CreateObject("roSGScreen")
   m.port = CreateObject("roMessagePort")
   screen.setMessagePort(m.port)
-  ? "Starting test using test scene with name TestsScene" ; testSceneName
-  scene = screen.CreateScene(testSceneName)
+  args.testConfigPath = options.configPath
+  ? "Starting test using test scene with name TestsScene" ; options.testSceneName
+  scene = screen.CreateScene(options.testSceneName)
   scene.id = "ROOT"
   screen.show()
   m.global = screen.getGlobalNode()
   m.global.addFields({"testsScene": scene})
-  if (preTestSetup <> invalid)
-    preTestSetup(screen)
+  if (options.preTestSetup <> invalid)
+    options.preTestSetup(screen)
   end if
   testId = args.TestId
   if (testId = invalid)
@@ -42,6 +52,25 @@ function Rooibos__Init(preTestSetup = invalid,  testUtilsDecoratorMethodName = i
       end if
     end if
   end while
+end function
+function validateOptions(opts) as Boolean
+  if opts.preTestSetup <> invalid AND type(opts.preTestSetup, 3) <> "Function"
+    ? "preTestSetup should be of type Function"
+    return false
+  end if
+  if opts.testUtilsDecoratorMethodName <> invalid AND type(opts.testUtilsDecoratorMethodName, 3) <> "String"
+    ? "testUtilsDecoratorMethodName should be of type String"
+    return false
+  end if
+  if type(opts.testSceneName, 3) <> "String"
+    ? "testSceneName should be of type String"
+    return false
+  end if
+  if type(opts.configPath, 3) <> "String"
+    ? "configPath should be of type String"
+    return false
+  end if
+  return true
 end function
 function BaseTestSuite() as object
   this = {}
@@ -1876,9 +1905,9 @@ function RBS_TR_TestRunner(args = {}) as object
   if (args.testConfigPath <> invalid and fs.Exists(args.testConfigPath))
     ? "Loading test config from " ; args.testConfigPath
     rawConfig = ReadAsciiFile(args.testConfigPath)
-  else if (fs.Exists("pkg:/source/tests/testconfig.json"))
-    ? "Loading test config from default location : pkg:/source/tests/testconfig.json"
-    rawConfig = ReadAsciiFile("pkg:/source/tests/testconfig.json")
+  else if (fs.Exists("pkg:/source/tests/rooibos/testconfig.json"))
+    ? "Loading test config from default location : pkg:/source/tests/rooibos/testconfig.json"
+    rawConfig = ReadAsciiFile("pkg:/source/tests/rooibos/testconfig.json")
   else
     ? "None of the testConfig.json locations existed"
   end if

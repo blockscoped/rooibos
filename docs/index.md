@@ -100,6 +100,14 @@ There are two ways to invoke RooibosC:
 ### Configuring Rooibos
 Rooibos's configuration is controlled via a json config file. The default location for this file is `pkg:/source/tests/rooibos/testconfig.json`.
 See [Example app](../samples/example)
+
+If you want to keep you config file somewhere else, just tell Rooibos where to find it by setting the `configPath` key on the options object passed to the Rooibos Init call in you `main.js` like so:
+```sh
+if (type(Rooibos__Init) = "Function") then Rooibos__Init({
+  configPath: "pkg:/path/to/testconfig.json"
+})
+```
+
 If the no testconfig is found a default one will be used.
 
 An example config file looks like this:
